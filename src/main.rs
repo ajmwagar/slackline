@@ -2,6 +2,8 @@ use std::error::Error;
 use structopt::StructOpt;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
+#[macro_use] extern crate prettytable;
+use prettytable::{Table, Row, Cell};
 
 #[derive(Serialize)]
 struct User {
@@ -144,7 +146,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             },
             OutputTypes::Markdown => {},
         OutputTypes::Table =>  {
-        println!( "{0: <10} | {1: <10} | {2: <10} | {3: <10} | {4: <10} | {5: <10}", "Name", "handle", "phone", "email", "status", "picture url");
+                // Create the table
+                let mut table = Table::new();
+
+                table.add_row(row!["Display Name", "Handle", "Phone Number", "Email Address", "Status", "Picture"]);
 
             for user in parsed_users {
 
@@ -161,9 +166,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     None => String::from("N/A")
                 };
 
-                println!("{0: <18} | {1: <10} | {2: <15} | {3: <3} | {4: <10} | {5: <10}", user.name, user.handle, phone, email, "N/A", picture);
+                table.add_row(row![user.name, user.handle, phone, email, "N/A", picture]);
 
             }
+            // Print the table to stdout
+            table.printstd();
 
             }
 
