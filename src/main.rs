@@ -1,9 +1,9 @@
 use std::error::Error;
 use structopt::StructOpt;
 use rayon::prelude::*;
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 #[macro_use] extern crate prettytable;
-use prettytable::{Table, Row, Cell};
+use prettytable::{Table};
 
 #[derive(Serialize)]
 struct User {
@@ -17,9 +17,9 @@ struct User {
 
 #[derive(Serialize,Debug)]
 enum SlackStatus {
-    Active,
-    Away,
-    DnD,
+    // Active,
+    // Away,
+    // DnD,
     Offline
 }
 
@@ -75,13 +75,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let client = slack_api::default_client()?;
     let token = cli_opts.api_key.unwrap();
 
-    if let Some(channel) = cli_opts.channel {
+    if let Some(_channel) = cli_opts.channel {
         let chan_req = slack_api::channels::ListRequest {
             exclude_archived: Some(true),
             exclude_members: Some(false)
 
         };
-        let channels = slack_api::channels::list(&client, &token, &chan_req)?;
+        let _channels = slack_api::channels::list(&client, &token, &chan_req)?;
 
     }
 
@@ -92,7 +92,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let users = slack_api::users::list(&client, &token, &users_req)?;
 
     if let Some(users) = users.members {
-        let parsed_users = users.par_iter().map(|mut user| {
+        let parsed_users = users.par_iter().map(|user| {
             let user = user.to_owned();
             let profile = user.profile.unwrap();
             User {
